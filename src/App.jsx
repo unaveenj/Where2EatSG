@@ -2,8 +2,10 @@ import { useState, useEffect } from 'react';
 import SearchBar from './components/SearchBar';
 import Map from './components/Map';
 import ResultsList from './components/ResultsList';
+import ApiKeyModal from './components/ApiKeyModal';
 import { processNaturalQuery } from './services/openRouterAPI';
 import { searchEstablishments } from './services/searchEngine';
+import { getApiKey, saveApiKey, hasApiKey } from './utils/apiKeyStorage';
 import geoJsonData from './data/EatingEstablishments.geojson';
 
 function App() {
@@ -13,6 +15,8 @@ function App() {
   const [selectedId, setSelectedId] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showMobileList, setShowMobileList] = useState(false);
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [apiKeyConfigured, setApiKeyConfigured] = useState(hasApiKey());
 
   // Load GeoJSON data on mount
   useEffect(() => {
@@ -53,17 +57,50 @@ function App() {
     setShowMobileList(false);
   };
 
+  const handleSaveApiKey = (apiKey) => {
+    saveApiKey(apiKey);
+    setApiKeyConfigured(hasApiKey());
+  };
+
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b z-10">
         <div className="px-4 py-4">
-          <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">
-            🍽️ Singapore Food Explorer
-          </h1>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex-1"></div>
+            <h1 className="text-2xl font-bold text-gray-900 text-center">
+              🍽️ Singapore Food Explorer
+            </h1>
+            <div className="flex-1 flex justify-end">
+              <button
+                onClick={() => setShowApiKeyModal(true)}
+                className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+                title="Configure API Key"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                </svg>
+                <span className="hidden sm:inline">
+                  {apiKeyConfigured ? 'API Key Set' : 'Set API Key'}
+                </span>
+                {apiKeyConfigured && (
+                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                )}
+              </button>
+            </div>
+          </div>
           <SearchBar onSearch={handleSearch} isLoading={isLoading} />
         </div>
       </header>
+
+      {/* API Key Modal */}
+      <ApiKeyModal
+        isOpen={showApiKeyModal}
+        onClose={() => setShowApiKeyModal(false)}
+        onSave={handleSaveApiKey}
+        currentKey={getApiKey()}
+      />
 
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">

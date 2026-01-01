@@ -1,12 +1,13 @@
 import axios from 'axios';
+import { getApiKey } from '../utils/apiKeyStorage';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 
 export async function processNaturalQuery(userQuery) {
-  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+  const apiKey = getApiKey();
 
   if (!apiKey) {
-    console.warn('OpenRouter API key not configured');
+    console.warn('OpenRouter API key not configured - using local parser');
     return parseQueryLocally(userQuery);
   }
 
