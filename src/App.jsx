@@ -78,40 +78,51 @@ function App() {
 
   if (dataLoading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
+      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <h2 className="text-xl font-semibold text-gray-900">Loading Food Establishments...</h2>
-          <p className="text-gray-600 mt-2">Please wait while we load the data (37MB)</p>
+          <div className="relative mb-8">
+            <div className="animate-spin rounded-full h-20 w-20 border-4 border-orange-200 border-t-orange-500 mx-auto"></div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-3xl">🍽️</span>
+            </div>
+          </div>
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent mb-2">
+            Loading Food Establishments
+          </h2>
+          <p className="text-gray-500">Preparing your culinary adventure...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-gray-50 to-orange-50">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b z-10">
-        <div className="px-4 py-4">
-          <div className="flex items-center justify-between mb-2">
+      <header className="bg-white shadow-lg z-10">
+        <div className="bg-gradient-to-r from-orange-500 to-red-500 px-4 py-6">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex-1"></div>
-            <h1 className="text-2xl font-bold text-gray-900 text-center">
-              🍽️ Singapore Food Explorer
-            </h1>
+            <div className="text-center">
+              <h1 className="text-3xl md:text-4xl font-bold text-white flex items-center gap-3 justify-center">
+                <span className="text-4xl">🍽️</span>
+                <span>Singapore Food Explorer</span>
+              </h1>
+              <p className="text-orange-100 text-sm mt-1">Discover amazing food places across Singapore</p>
+            </div>
             <div className="flex-1 flex justify-end">
               <button
                 onClick={() => setShowApiKeyModal(true)}
-                className="flex items-center gap-2 px-3 py-2 text-sm rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl transition-all backdrop-blur-sm border border-white/30"
                 title="Configure API Key"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                 </svg>
-                <span className="hidden sm:inline">
-                  {apiKeyConfigured ? 'API Key Set' : 'Set API Key'}
+                <span className="hidden lg:inline text-sm font-medium">
+                  {apiKeyConfigured ? 'API' : 'API Key'}
                 </span>
                 {apiKeyConfigured && (
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                  <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
                 )}
               </button>
             </div>
@@ -133,7 +144,7 @@ function App() {
         {/* Results Panel - Desktop: fixed left, Mobile: toggleable overlay */}
         <div
           className={`
-            w-full md:w-96 bg-white border-r flex flex-col
+            w-full md:w-[400px] bg-white flex flex-col shadow-xl
             md:relative md:block
             ${showMobileList ? 'fixed inset-0 z-20' : 'hidden md:flex'}
           `}
@@ -141,7 +152,7 @@ function App() {
           {/* Mobile close button */}
           <button
             onClick={() => setShowMobileList(false)}
-            className="md:hidden absolute top-4 right-4 z-30 p-2 bg-white rounded-full shadow-lg"
+            className="md:hidden absolute top-4 right-4 z-30 p-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full shadow-lg hover:shadow-xl transition-all"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -166,12 +177,12 @@ function App() {
           {/* Mobile toggle button */}
           <button
             onClick={() => setShowMobileList(!showMobileList)}
-            className="md:hidden fixed bottom-6 left-1/2 transform -translate-x-1/2 z-10 px-6 py-3 bg-blue-600 text-white rounded-full shadow-lg flex items-center gap-2"
+            className="md:hidden fixed bottom-8 left-1/2 transform -translate-x-1/2 z-10 px-8 py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold rounded-2xl shadow-2xl flex items-center gap-3 hover:from-orange-600 hover:to-red-600 transition-all border-4 border-white"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" />
             </svg>
-            View Results ({searchResults.length})
+            <span className="text-lg">View {searchResults.length} Places</span>
           </button>
         </div>
       </div>
