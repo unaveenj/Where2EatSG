@@ -6,7 +6,6 @@ import ApiKeyModal from './components/ApiKeyModal';
 import { processNaturalQuery } from './services/openRouterAPI';
 import { searchEstablishments } from './services/searchEngine';
 import { getApiKey, saveApiKey, hasApiKey } from './utils/apiKeyStorage';
-import geoJsonData from './data/EatingEstablishments.geojson';
 
 function App() {
   const [establishments, setEstablishments] = useState([]);
@@ -17,14 +16,29 @@ function App() {
   const [showMobileList, setShowMobileList] = useState(false);
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [apiKeyConfigured, setApiKeyConfigured] = useState(hasApiKey());
+  const [dataLoading, setDataLoading] = useState(true);
 
   // Load GeoJSON data on mount
   useEffect(() => {
-    if (geoJsonData && geoJsonData.features) {
-      setEstablishments(geoJsonData.features);
-      // Show first 20 establishments by default
-      setSearchResults(geoJsonData.features.slice(0, 20));
+    async function loadGeoJSON() {
+      try {
+        setDataLoading(true);
+        const response = await fetch('/EatingEstablishments.geojson');
+        const geoJsonData = await response.json();
+
+        if (geoJsonData && geoJsonData.features) {
+          setEstablishments(geoJsonData.features);
+          // Show first 20 establishments by default
+          setSearchResults(geoJsonData.features.slice(0, 20));
+        }
+      } catch (error) {
+        console.error('Error loading GeoJSON data:', error);
+      } finally {
+        setDataLoading(false);
+      }
     }
+
+    loadGeoJSON();
   }, []);
 
   const handleSearch = async (query) => {
@@ -61,6 +75,18 @@ function App() {
     saveApiKey(apiKey);
     setApiKeyConfigured(hasApiKey());
   };
+
+  if (dataLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold text-gray-900">Loading Food Establishments...</h2>
+          <p className="text-gray-600 mt-2">Please wait while we load the data (37MB)</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-screen bg-gray-50">
